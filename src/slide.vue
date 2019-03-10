@@ -59,9 +59,10 @@ export default {
 		}
 		orderByDOM(this.$el.children)
 		this.fragments = fragments
-
-		window.addEventListener('resize', this.computeScale)
 		this.computeScale()
+		if (window !== undefined) {
+			window.addEventListener('resize', this.computeScale)
+		}
 	},
 	beforeDestroy () {
 		window.removeEventListener('resize', this.computeScale)

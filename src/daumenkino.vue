@@ -48,10 +48,12 @@ export default {
 		this.slides = this.$children.filter(slide => slide._isSlide).sort((a, b) => children.indexOf(a.$el) - children.indexOf(b.$el))
 
 		document.addEventListener('keydown', this.globalKeyHandler)
-		window.addEventListener('message', this.globalMessageHandler)
+		if (window !== undefined) {
+			window.addEventListener('message', this.globalMessageHandler)
 
-		// report to parent
-		window.opener?.postMessage(['loaded'])
+			// report to parent
+			window.opener?.postMessage(['loaded'])
+		}
 	},
 	beforeDestroy () {
 		document.removeEventListener('keydown', this.globalKeyHandler)
@@ -123,6 +125,7 @@ export default {
 			}
 		},
 		sendState () {
+			if (window === undefined) return
 			const otherWindow = this._speakerWindow || (this.speakerMode && window.opener)
 			if (!otherWindow) return
 			otherWindow.postMessage(['updateState', {

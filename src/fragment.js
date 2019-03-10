@@ -21,13 +21,17 @@ export default {
 	methods: {},
 	render (createElement) {
 		const slot = this.$slots.default[0]
-		let data = cloneDeep(slot.data) || {}
-		if (!data.staticClass) {
-			data.staticClass = []
+		const data = cloneDeep(slot.data) || {}
+		if (!data.class) {
+			data.class = []
 		}
-		data.staticClass.push('daumenkino-fragment')
+		if (data.staticClass) {
+			data.class.push(...data.staticClass.split(' '))
+			data.staticClass = null
+		}
+		data.class.push('daumenkino-fragment')
 		if (this.show) {
-			data.staticClass.push('daumenkino-fragment-show')
+			data.class.push('daumenkino-fragment-show')
 		}
 		return createElement(slot.tag, data, slot.children || slot.text)
 	}
