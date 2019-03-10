@@ -19,7 +19,7 @@ export default {
 		return {
 			animating: false,
 			slides: [],
-			activeIndex: 0,
+			activePath: [],
 			slideScale: 1,
 			speakerMode: false,
 			transitionDirection: '',
@@ -29,15 +29,99 @@ export default {
 	},
 	computed: {
 		activeSlide () {
-			return this.slides[this.activeIndex]
+			if (this.slides.length === 0) return null
+			const path = this.activePath.slice()
+			let slide = this.slides[(path.shift() || 0)]
+			if (slide.nestedSlides.length > 0) {
+				slide = slide.nestedSlides[(path.shift() || 0)]
+			}
+			console.log(slide)
+			return slide
+		},
+		nextPath () {
+			const nextPath = []
+			// next fragment
+			if (this.activeSlide.fragments.length > 0 && this.activeSlide.shownFragments < this.activeSlide.fragments.length) {
+				nextPath.push((this.activePath[0] || 0))
+				if (this.slides[(this.activePath[0] || 0)].nestedSlides.length > 0) {
+					nextPath.push(this.activePath[1] || 0)
+				}
+				nextPath.push(this.activeSlide.shownFragments + 1)
+			} else if (this.slides[(this.activePath[0] || 0)].nestedSlides.length > 0 && (this.activePath[1] || 0) < this.slides[(this.activePath[0] || 0)].nestedSlides.length - 1) {
+				// next nested slide
+				nextPath.push((this.activePath[0] || 0))
+				nextPath.push((this.activePath[1] || 0) + 1)
+			} else if ((this.activePath[0] || 0) < this.slides.length - 1) {
+				// next slide
+				nextPath.push((this.activePath[0] || 0) + 1)
+			} else {
+				return null
+			}
+			return nextPath
+		},
+		previousPath () {
+			const previousPath = []
+			// previous fragment
+			if (this.activeSlide.fragments.length > 0 && this.activeSlide.shownFragments > 0) {
+				previousPath.push(this.activePath[0])
+				// normalize path and omit trailing 0s
+				if (this.activeSlide.shownFragments !== 1 && this.activePath[1] !== 0 && this.slides[this.activePath[0]].nestedSlides.length > 0) {
+					previousPath.push(this.activePath[1] || 0)
+				}
+				if (this.activeSlide.shownFragments !== 1) {
+					previousPath.push(this.activeSlide.shownFragments - 1)
+				}
+			} else if (this.slides[(this.activePath[0] || 0)].nestedSlides.length > 0 && this.activePath[1] > 0) {
+				// previous nested slide
+				previousPath.push(this.activePath[0])
+				// normalize path and omit trailing 0s
+				const fragmentsLength = this.slides[(this.activePath[0] || 0)].nestedSlides[this.activePath[1] - 1].fragments.length
+				if (this.activePath[1] !== 1 || fragmentsLength) {
+					previousPath.push(this.activePath[1] - 1)
+				}
+				if (fragmentsLength) {
+					previousPath.push(fragmentsLength)
+				}
+			} else if (this.activePath[0] > 0) {
+				// previous slide
+				// normalize path and omit trailing 0s
+				const fragmentsLength = this.slides[this.activePath[0] - 1].fragments.length
+				if (this.activePath[0] !== 1 || fragmentsLength) {
+					previousPath.push(this.activePath[0] - 1)
+				}
+				if (fragmentsLength) {
+					previousPath.push(fragmentsLength)
+				}
+			} else {
+				return null
+			}
+			return previousPath
 		},
 		nextSlide () {
 			return this.speakerMode && this.slides[this.activeIndex + 1]
 		},
+		totalSlides () {
+			return this.slides.reduce((acc, slide) => {
+				acc += slide.nestedSlides.length || 1
+				return acc
+			}, 0)
+		},
+		progress () {
+			let pastActive = false
+			const count = (acc, slide) => {
+				if (pastActive) return acc
+				if (slide === this.activeSlide) {
+					pastActive = true
+					return acc
+				}
+				return acc + (slide.nestedSlides.length > 0 ? slide.nestedSlides.reduce(count, 0) : 1)
+			}
+			return this.slides.reduce(count, 0)
+		},
 		style () {
 			return {
-				'--slides-total': this.slides.length,
-				'--slides-active': this.activeIndex
+				'--slides-total': this.totalSlides,
+				'--slides-active': this.progress
 			}
 		},
 		elapsedTime () {
@@ -48,22 +132,25 @@ export default {
 		}
 	},
 	watch: {
-		activeIndex: 'sendState'
+		activePath () {
+			this.sendState()
+			this.saveURL()
+		}
 	},
 	created () {
 	},
 	mounted () {
-		const children = Array.from(this.$el.children)
-		this.slides = this.$children.filter(slide => slide._isSlide).sort((a, b) => children.indexOf(a.$el) - children.indexOf(b.$el))
-
+		this.$nextTick(() => {
+			const children = Array.from(this.$el.children)
+			this.slides = this.$children.filter(slide => slide._isSlide).sort((a, b) => children.indexOf(a.$el) - children.indexOf(b.$el))
+			this.$nextTick(() => {
+				this.loadURL()
+			})
+		})
 		document.addEventListener('keydown', this.globalKeyHandler)
-		if (window !== undefined) {
-			window.addEventListener('message', this.globalMessageHandler)
-
-			// report to parent
-			window.opener?.postMessage(['loaded'])
-		}
-
+		window.addEventListener('message', this.globalMessageHandler)
+		// report to parent
+		window.opener?.postMessage(['loaded'])
 		this._timerInterval = setInterval(() => this.currentTime = Date.now(), 1000)
 	},
 	beforeDestroy () {
@@ -80,19 +167,15 @@ export default {
 			this.activeIndex = newIndex
 		},
 		next () {
-			if (this.activeSlide.shownFragments < this.activeSlide.fragments.length) {
-				this.activeSlide.showNextFragment()
-			} else {
+			if (this.nextPath) {
 				this.transitionDirection = 'next'
-				this.changeSlide(this.activeIndex + 1)
+				this.activePath = this.nextPath
 			}
 		},
 		previous () {
-			if (this.activeSlide.shownFragments > 0) {
-				this.activeSlide.showPreviousFragment()
-			} else {
+			if (this.previousPath) {
 				this.transitionDirection = 'previous'
-				this.changeSlide(this.activeIndex - 1)
+				this.activePath = this.previousPath
 			}
 		},
 		toggleSpeakerMode () {
@@ -144,6 +227,12 @@ export default {
 				activeIndex: this.activeIndex,
 				shownFragments: this.activeSlide.shownFragments
 			}])
+		},
+		loadURL () {
+			this.activePath = window.location.hash.substr(1).split('/').map(n => Number(n))
+		},
+		saveURL () {
+			window.location.hash = this.activePath.join('/')
 		}
 	}
 }
@@ -175,4 +264,11 @@ export default {
 			height: 4px
 			width: calc((var(--slides-active) + 1) / var(--slides-total) * 100%)
 			background-color: red
+	.clock
+		position: absolute
+		top: 24px
+		left: calc(50% - 10vw)
+		width: 20vw
+		font-size: 4vw
+		text-align: center
 </style>

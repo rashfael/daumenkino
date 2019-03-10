@@ -1,6 +1,6 @@
 <template lang="pug">
 transition(:name="`slide-${direction}`", @after-leave="afterLeave")
-	.daumenkino-slide(v-show="active || next", :class="{next}", :style="style")
+	.daumenkino-slide(v-show="active || activeChild || next", :class="{next}", :style="style")
 		slot
 </template>
 <script>
@@ -10,14 +10,15 @@ export default {
 	components: {},
 	data () {
 		return {
+			activeChild: false,
+			nestedSlides: [],
 			fragments: [],
-			showFragments: 0,
 			scale: 1
 		}
 	},
 	computed: {
 		active () {
-			return !this.$parent.animating && this.$parent.activeSlide === this
+			return this.$parent.activeSlide === this || this.$parent.$parent.activeSlide === this
 		},
 		next () {
 			return this.$parent.nextSlide === this
@@ -29,36 +30,43 @@ export default {
 			}
 		},
 		shownFragments () {
-			return this.next ? this.fragments.length : this.showFragments
+			if (!this.active) return
+			const path = this.$parent.activePath.slice()
+			if (this.$parent.slides[path.shift()].nestedSlides.length > 0) {
+				path.shift()
+			}
+			return path.shift() || 0
 		},
 		direction () {
 			return this.$parent.transitionDirection
 		}
 	},
 	watch: {
-		shownFragments () {
-			this.$parent.sendState()
+		'$parent.activeSlide' () {
+			this.activeChild = this.$children.some(child => child._isSlide && child.active)
 		}
 	},
 	created () {
 		this._isSlide = true
 	},
 	mounted () {
-		const fragments = []
-		const unorderedFragments = this.$children.filter(slide => slide._isFragment)
+		const unorderedFragments = this.$children.filter(c => c._isFragment || c._isSlide)
 		const unorderedFragmentsEls = unorderedFragments.map(c => c.$el)
-		const orderByDOM = function (children) {
+		const orderByDOM = (children) => {
 			if (!children) return
 			for (const child of children) {
 				const index = unorderedFragmentsEls.indexOf(child)
 				if (index >= 0) {
-					fragments.push(unorderedFragments[index])
+					if (unorderedFragments[index]._isSlide) {
+						this.nestedSlides.push(unorderedFragments[index])
+						continue
+					}
+					this.fragments.push(unorderedFragments[index])
 				}
 				orderByDOM(child.children)
 			}
 		}
 		orderByDOM(this.$el.children)
-		this.fragments = fragments
 		this.computeScale()
 		if (window !== undefined) {
 			window.addEventListener('resize', this.computeScale)
@@ -75,15 +83,6 @@ export default {
 		},
 		afterLeave () {
 			this.$emit('after-leave')
-		},
-		updateShownFragments (showFragments) {
-			this.showFragments = showFragments
-		},
-		showNextFragment () {
-			this.showFragments++
-		},
-		showPreviousFragment () {
-			this.showFragments--
 		}
 	}
 }
@@ -108,6 +107,8 @@ export default {
 			left: calc(16px - 480px + 480px * var(--scale))
 		&.next
 			right: calc(16px - 480px + 480px * var(--scale))
+		.daumenkin-fragement
+			visibility: visible !important // HACK
 
 .daumenkino:not(.speaker-mode)
 	.slide-next-enter-active, .slide-next-leave-active, .slide-previous-enter-active, .slide-previous-leave-active
