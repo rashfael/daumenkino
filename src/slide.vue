@@ -1,7 +1,8 @@
 <template lang="pug">
 transition(:name="`slide-${direction}`", @after-leave="afterLeave")
-	.daumenkino-slide(v-show="active || activeChild || next", :class="{next}", :style="style")
-		slot
+	.daumenkino-slide(v-show="active || activeChild || next || overview", :class="{active, next, nested}", :style="style")
+		.daumenkino-slide-content
+			slot
 </template>
 <script>
 const SLIDE_WIDTH = 960
@@ -23,6 +24,12 @@ export default {
 		next () {
 			return this.$parent.nextSlide === this
 		},
+		nested () {
+			return this.nestedSlides.length > 0
+		},
+		overview () {
+			return this.$parent.overview || this.$parent.$parent.overview
+		},
 		style () {
 			const speakerFactor = this.$parent.speakerMode ? (this.next ? 0.5 : 0.5) : 1
 			return {
@@ -38,7 +45,7 @@ export default {
 			return path.shift() || 0
 		},
 		direction () {
-			return this.$parent.transitionDirection
+			return this.$parent.transitionDirection || this.$parent.$parent.transitionDirection
 		}
 	},
 	watch: {
@@ -90,27 +97,56 @@ export default {
 <style lang="stylus">
 .daumenkino-slide
 	position: absolute
-	width: 960px
-	height: 700px
+	width: 100vw
+	height: 100vh
+	top: 0
+	left: 0
 	display: flex
 	flex-direction: column
 	justify-content: center
 	align-items: center
-	transform: scale(var(--scale)) translateZ(0)
+	&:not(.nested) > .daumenkino-slide-content
+			display: flex
+			flex-direction: column
+			justify-content: center
+			align-items: center
+			width: 960px
+			height: 700px
+			transform: scale(var(--scale)) translateZ(0)
 	.daumenkino-fragment:not(.daumenkino-fragment-show)
 		visibility: hidden
-.speaker-mode
-	.daumenkino-slide
-		border: 2px solid #CCC
-		top: calc(16px - 350px + 350px * var(--scale))
-		&:not(.next)
-			left: calc(16px - 480px + 480px * var(--scale))
-		&.next
-			right: calc(16px - 480px + 480px * var(--scale))
-		.daumenkin-fragement
-			visibility: visible !important // HACK
+.daumenkino.speaker-mode .daumenkino-slide
+	border: 2px solid #CCC
+	top: calc(16px - 350px + 350px * var(--scale))
+	&:not(.next)
+		left: calc(16px - 480px + 480px * var(--scale))
+	&.next
+		right: calc(16px - 480px + 480px * var(--scale))
+	.daumenkino-fragment
+		visibility: visible !important // HACK
 
-.daumenkino:not(.speaker-mode)
+.daumenkino.overview
+	.daumenkino-slide
+		position: relative
+		&.nested
+			display: flex
+			flex-direction: column
+			justify-content: flex-start
+		&:not(.nested)
+			border: 2px solid #CCC
+			width: calc(var(--scale) * 0.3 * 960px)
+			height: calc(var(--scale) * 0.3 * 700px)
+			margin: 16px
+			& > .daumenkino-slide-content
+				transform: scale(calc(var(--scale) * 0.3)) translateZ(0)
+		&.active
+			border: 2px solid #333
+	> .daumenkino-slide
+		transform: translate(calc(var(--active-slide-x) * var(--scale) * 0.3 * -992px + var(--scale) * 0.3 * 0.5 * -992px), calc(var(--active-slide-y) * var(--scale) * 0.3 * -732px + var(--scale) * 0.3 * 0.5 * -732px))
+	.daumenkino-fragment
+		visibility: visible !important // HACK
+
+.daumenkino:not(.speaker-mode):not(.overview)
 	.slide-next-enter-active, .slide-next-leave-active, .slide-previous-enter-active, .slide-previous-leave-active
 		transition: transform .5s ease
 

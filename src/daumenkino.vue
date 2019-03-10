@@ -1,5 +1,5 @@
 <template lang="pug">
-.daumenkino(:class="[`daumenkino-theme-${theme}`, {'speaker-mode': speakerMode}]", :style="style")
+.daumenkino(:class="[`daumenkino-theme-${theme}`, {'speaker-mode': speakerMode, overview}]", :style="style")
 	slot
 	.progress-bar-rail
 		.progress-bar
@@ -22,6 +22,7 @@ export default {
 			activePath: [],
 			slideScale: 1,
 			speakerMode: false,
+			overview: false,
 			transitionDirection: '',
 			startTime: Date.now(),
 			currentTime: Date.now()
@@ -35,7 +36,6 @@ export default {
 			if (slide.nestedSlides.length > 0) {
 				slide = slide.nestedSlides[(path.shift() || 0)]
 			}
-			console.log(slide)
 			return slide
 		},
 		nextPath () {
@@ -121,7 +121,9 @@ export default {
 		style () {
 			return {
 				'--slides-total': this.totalSlides,
-				'--slides-active': this.progress
+				'--slides-active': this.progress,
+				'--active-slide-x': this.activePath[0] || 0,
+				'--active-slide-y': this.slides[this.activePath[0]]?.nestedSlides[this.activePath[1]] ? this.activePath[1] : 0
 			}
 		},
 		elapsedTime () {
@@ -183,21 +185,33 @@ export default {
 				this._speakerWindow = window.open(window.location.pathname, 'Daumenkino Speaker Mode', 'height=900,width=1600')
 			}
 		},
+		toggleOverview () {
+			this.overview = !this.overview
+		},
 		globalKeyHandler (event) {
 			switch (event.key) {
 				case ' ':
 				case 'ArrowRight': {
+					event.preventDefault()
 					this.next()
 					break
 				}
 				case 'Backspace':
 				case 'ArrowLeft': {
+					event.preventDefault()
 					this.previous()
 					break
 				}
-				case 's':
+				case 's': {
+					event.preventDefault()
 					this.toggleSpeakerMode()
 					break
+				}
+				case 'Escape': {
+					event.preventDefault()
+					this.toggleOverview()
+					break
+				}
 			}
 		},
 		// Speaker Mode Methods
@@ -243,18 +257,11 @@ export default {
 	height: 100vh
 	width: 100vw
 	display: flex
-	flex-direction: column
-	justify-content: center
-	align-items: center
 	overflow: hidden
-	.slides
-		flex: none
-		display: flex
-		justify-content: center
-		align-items: center
+	box-sizing: border-box
 
 	.progress-bar-rail
-		position: absolute
+		position: fixed
 		bottom: 0
 		left: 0
 		width: 100vw
@@ -271,4 +278,7 @@ export default {
 		width: 20vw
 		font-size: 4vw
 		text-align: center
+	&.overview
+		flex-direction: row
+		padding: 50vh 50vw
 </style>
