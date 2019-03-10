@@ -20,17 +20,16 @@ export default {
 	data () {
 		return {
 			animating: false,
-			slides: null,
+			slides: [],
 			activeIndex: 0,
 			slideScale: 1
 		}
 	},
 	computed: {
 		activeSlide () {
-			return this.slides?.[this.activeIndex]
+			return this.slides[this.activeIndex]
 		},
 		style () {
-			if (!this.slides) return
 			return {
 				'--slides-total': this.slides.length,
 				'--slides-active': this.activeIndex
@@ -70,22 +69,30 @@ export default {
 			this.animating = true
 			this.activeIndex = newIndex
 		},
-		nextSlide () {
-			this.changeSlide(this.activeIndex + 1)
+		next () {
+			if (this.activeSlide.shownFragments < this.activeSlide.fragments.length) {
+				this.activeSlide.showNextFragment()
+			} else {
+				this.changeSlide(this.activeIndex + 1)
+			}
 		},
-		previousSlide () {
-			this.changeSlide(this.activeIndex - 1)
+		previous () {
+			if (this.activeSlide.shownFragments > 0) {
+				this.activeSlide.showPreviousFragment()
+			} else {
+				this.changeSlide(this.activeIndex - 1)
+			}
 		},
 		globalKeyHandler (event) {
 			switch (event.key) {
 				case ' ':
 				case 'ArrowRight': {
-					this.nextSlide()
+					this.next()
 					break
 				}
 				case 'Backspace':
 				case 'ArrowLeft': {
-					this.previousSlide()
+					this.previous()
 					break
 				}
 			}
@@ -101,6 +108,7 @@ export default {
 	flex-direction: column
 	justify-content: center
 	align-items: center
+	overflow: hidden
 	.slides
 		width: 960px
 		height: 700px

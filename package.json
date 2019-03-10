@@ -11,6 +11,7 @@
   },
   "author": "rashfael <rashfael@isobeef.org>",
   "dependencies": {
+    "lodash": "^4.17.11",
     "vue": "^2.6.8"
   },
   "devDependencies": {
