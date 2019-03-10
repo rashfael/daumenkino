@@ -1,0 +1,6 @@
+node_modules
+build
+docs
+dist
+build-stats.json
+.babelrc

@@ -1,0 +1,39 @@
+{
+  "name": "daumenkino",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "vue-cli-service lint",
+    "build": "vuepress build docs",
+    "deploy": "npm run build -s && gh-pages -d dist",
+    "start": "vuepress dev docs"
+  },
+  "author": "rashfael <rashfael@isobeef.org>",
+  "dependencies": {
+    "vue": "^2.6.8"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "@vue/cli-plugin-babel": "^3.5.0",
+    "@vue/cli-plugin-eslint": "^3.5.0",
+    "@vue/cli-service": "^3.5.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "autoprefixer-stylus": "^0.14.0",
+    "babel-eslint": "10.0.0",
+    "babel-loader": "^8.0.4",
+    "eslint": "^5.15.1",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-vue": "^4.7.1",
+    "gh-pages": "^1.2.0",
+    "jstransformer-markdown": "^1.2.1",
+    "nib": "^1.1.2",
+    "pug": "^2.0.3",
+    "pug-plain-loader": "^1.0.0",
+    "rupture": "^0.7.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "vuepress": "^1.0.0-alpha.42"
+  },
+  "license": "MIT"
+}

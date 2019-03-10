@@ -1,0 +1,14 @@
+{
+	"presets": [
+		[
+			"@babel/env", {
+				"modules": false,
+				"loose": true,
+				"targets": {
+					"chrome": 66
+				}
+			}
+		]
+	],
+	"plugins": ["@babel/proposal-optional-chaining"]
+}
