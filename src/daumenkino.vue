@@ -3,6 +3,8 @@
 	slot
 	.progress-bar-rail
 		.progress-bar
+	template(v-if="speakerMode")
+		.clock {{ elapsedTime }}
 </template>
 <script>
 export default {
@@ -20,7 +22,9 @@ export default {
 			activeIndex: 0,
 			slideScale: 1,
 			speakerMode: false,
-			transitionDirection: ''
+			transitionDirection: '',
+			startTime: Date.now(),
+			currentTime: Date.now()
 		}
 	},
 	computed: {
@@ -36,7 +40,12 @@ export default {
 				'--slides-active': this.activeIndex
 			}
 		},
-
+		elapsedTime () {
+			const totalSeconds = Math.floor((this.currentTime - this.startTime) / 1000)
+			const minutes = Math.floor(totalSeconds / 60)
+			const seconds = totalSeconds % 60
+			return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+		}
 	},
 	watch: {
 		activeIndex: 'sendState'
@@ -54,8 +63,11 @@ export default {
 			// report to parent
 			window.opener?.postMessage(['loaded'])
 		}
+
+		this._timerInterval = setInterval(() => this.currentTime = Date.now(), 1000)
 	},
 	beforeDestroy () {
+		clearInterval(this._timerInterval)
 		document.removeEventListener('keydown', this.globalKeyHandler)
 	},
 	methods: {
@@ -85,7 +97,7 @@ export default {
 		},
 		toggleSpeakerMode () {
 			if (!this.speakerMode) {
-				this._speakerWindow = window.open('/', 'Daumenkino Speaker Mode', 'height=700,width=960')
+				this._speakerWindow = window.open(window.location.pathname, 'Daumenkino Speaker Mode', 'height=900,width=1600')
 			}
 		},
 		globalKeyHandler (event) {
