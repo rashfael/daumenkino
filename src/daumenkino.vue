@@ -7,6 +7,8 @@
 		.clock {{ elapsedTime }}
 </template>
 <script>
+import isEqual from 'lodash/isEqual'
+
 export default {
 	components: {},
 	props: {
@@ -38,31 +40,23 @@ export default {
 			}
 			return slide
 		},
-		nextPath () {
-			const nextPath = []
-			// next fragment
-			if (this.activeSlide.fragments.length > 0 && this.activeSlide.shownFragments < this.activeSlide.fragments.length) {
-				nextPath.push((this.activePath[0] || 0))
-				if (this.slides[(this.activePath[0] || 0)].nestedSlides.length > 0) {
-					nextPath.push(this.activePath[1] || 0)
-				}
-				nextPath.push(this.activeSlide.shownFragments + 1)
-			} else if (this.slides[(this.activePath[0] || 0)].nestedSlides.length > 0 && (this.activePath[1] || 0) < this.slides[(this.activePath[0] || 0)].nestedSlides.length - 1) {
-				// next nested slide
-				nextPath.push((this.activePath[0] || 0))
-				nextPath.push((this.activePath[1] || 0) + 1)
-			} else if ((this.activePath[0] || 0) < this.slides.length - 1) {
-				// next slide
-				nextPath.push((this.activePath[0] || 0) + 1)
-			} else {
-				return null
+		nextSlide () {
+			if (this.slides.length === 0 || !this.speakerMode) return null
+			const path = this.computeNextPath(true)
+			if (!path) return
+			let slide = this.slides[(path.shift() || 0)]
+			if (slide.nestedSlides.length > 0) {
+				slide = slide.nestedSlides[(path.shift() || 0)]
 			}
-			return nextPath
+			return slide
+		},
+		nextPath () {
+			return this.computeNextPath()
 		},
 		previousPath () {
 			const previousPath = []
 			// previous fragment
-			if (this.activeSlide.fragments.length > 0 && this.activeSlide.shownFragments > 0) {
+			if (!this.overview && this.activeSlide.fragments.length > 0 && this.activeSlide.shownFragments > 0) {
 				previousPath.push(this.activePath[0])
 				// normalize path and omit trailing 0s
 				if (this.activeSlide.shownFragments !== 1 && this.activePath[1] !== 0 && this.slides[this.activePath[0]].nestedSlides.length > 0) {
@@ -75,7 +69,7 @@ export default {
 				// previous nested slide
 				previousPath.push(this.activePath[0])
 				// normalize path and omit trailing 0s
-				const fragmentsLength = this.slides[(this.activePath[0] || 0)].nestedSlides[this.activePath[1] - 1].fragments.length
+				const fragmentsLength = this.overview ? 0 : this.slides[(this.activePath[0] || 0)].nestedSlides[this.activePath[1] - 1].fragments.length
 				if (this.activePath[1] !== 1 || fragmentsLength) {
 					previousPath.push(this.activePath[1] - 1)
 				}
@@ -85,7 +79,7 @@ export default {
 			} else if (this.activePath[0] > 0) {
 				// previous slide
 				// normalize path and omit trailing 0s
-				const fragmentsLength = this.slides[this.activePath[0] - 1].fragments.length
+				const fragmentsLength = this.overview ? 0 : this.slides[this.activePath[0] - 1].fragments.length
 				if (this.activePath[0] !== 1 || fragmentsLength) {
 					previousPath.push(this.activePath[0] - 1)
 				}
@@ -96,9 +90,6 @@ export default {
 				return null
 			}
 			return previousPath
-		},
-		nextSlide () {
-			return this.speakerMode && this.slides[this.activeIndex + 1]
 		},
 		totalSlides () {
 			return this.slides.reduce((acc, slide) => {
@@ -160,13 +151,27 @@ export default {
 		document.removeEventListener('keydown', this.globalKeyHandler)
 	},
 	methods: {
-		changeSlide (newIndex) {
-			if (!this.slides[newIndex] || this.activeIndex === newIndex) return
-			/* this.activeSlide.$once('after-leave', () => {
-				this.animating = false
-			})
-			this.animating = true */
-			this.activeIndex = newIndex
+		// computed base functions
+		computeNextPath (skipFragments) {
+			const nextPath = []
+			// next fragment
+			if (!this.overview && !skipFragments && this.activeSlide.fragments.length > 0 && this.activeSlide.shownFragments < this.activeSlide.fragments.length) {
+				nextPath.push((this.activePath[0] || 0))
+				if (this.slides[(this.activePath[0] || 0)].nestedSlides.length > 0) {
+					nextPath.push(this.activePath[1] || 0)
+				}
+				nextPath.push(this.activeSlide.shownFragments + 1)
+			} else if (this.slides[(this.activePath[0] || 0)].nestedSlides.length > 0 && (this.activePath[1] || 0) < this.slides[(this.activePath[0] || 0)].nestedSlides.length - 1) {
+				// next nested slide
+				nextPath.push((this.activePath[0] || 0))
+				nextPath.push((this.activePath[1] || 0) + 1)
+			} else if ((this.activePath[0] || 0) < this.slides.length - 1) {
+				// next slide
+				nextPath.push((this.activePath[0] || 0) + 1)
+			} else {
+				return null
+			}
+			return nextPath
 		},
 		next () {
 			if (this.nextPath) {
@@ -212,6 +217,11 @@ export default {
 					this.toggleOverview()
 					break
 				}
+				case 'Enter': {
+					event.preventDefault()
+					this.overview = false
+					break
+				}
 			}
 		},
 		// Speaker Mode Methods
@@ -227,8 +237,8 @@ export default {
 					break
 				}
 				case 'updateState': {
-					this.changeSlide(event.data[1].activeIndex)
-					this.activeSlide.updateShownFragments(event.data[1].shownFragments)
+					if (isEqual(this.activePath, event.data[1].activePath)) return
+					this.activePath = event.data[1].activePath
 					break
 				}
 			}
@@ -238,8 +248,7 @@ export default {
 			const otherWindow = this._speakerWindow || (this.speakerMode && window.opener)
 			if (!otherWindow) return
 			otherWindow.postMessage(['updateState', {
-				activeIndex: this.activeIndex,
-				shownFragments: this.activeSlide.shownFragments
+				activePath: this.activePath
 			}])
 		},
 		loadURL () {

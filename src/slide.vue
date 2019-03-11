@@ -1,6 +1,6 @@
 <template lang="pug">
 transition(:name="`slide-${direction}`", @after-leave="afterLeave")
-	.daumenkino-slide(v-show="active || activeChild || next || overview", :class="{active, next, nested}", :style="style")
+	.daumenkino-slide(v-show="active || activeChild || nextChild || next || overview", :class="{active, next, nested}", :style="style")
 		.daumenkino-slide-content
 			slot
 </template>
@@ -12,6 +12,7 @@ export default {
 	data () {
 		return {
 			activeChild: false,
+			nextChild: false,
 			nestedSlides: [],
 			fragments: [],
 			scale: 1
@@ -22,7 +23,7 @@ export default {
 			return this.$parent.activeSlide === this || this.$parent.$parent.activeSlide === this
 		},
 		next () {
-			return this.$parent.nextSlide === this
+			return this.$parent.nextSlide === this || this.$parent.$parent.nextSlide === this
 		},
 		nested () {
 			return this.nestedSlides.length > 0
@@ -31,7 +32,7 @@ export default {
 			return this.$parent.overview || this.$parent.$parent.overview
 		},
 		style () {
-			const speakerFactor = this.$parent.speakerMode ? (this.next ? 0.5 : 0.5) : 1
+			const speakerFactor = (this.$parent.speakerMode || this.$parent.$parent.speakerMode) ? (this.next ? 0.5 : 0.5) : 1
 			return {
 				'--scale': this.scale * speakerFactor
 			}
@@ -51,6 +52,9 @@ export default {
 	watch: {
 		'$parent.activeSlide' () {
 			this.activeChild = this.$children.some(child => child._isSlide && child.active)
+		},
+		'$parent.nextSlide' () {
+			this.nextChild = this.$children.some(child => child._isSlide && child.next)
 		}
 	},
 	created () {
@@ -115,15 +119,21 @@ export default {
 			transform: scale(var(--scale)) translateZ(0)
 	.daumenkino-fragment:not(.daumenkino-fragment-show)
 		visibility: hidden
-.daumenkino.speaker-mode .daumenkino-slide
+.daumenkino.speaker-mode:not(.overview) .daumenkino-slide:not(.nested)
 	border: 2px solid #CCC
-	top: calc(16px - 350px + 350px * var(--scale))
-	&:not(.next)
-		left: calc(16px - 480px + 480px * var(--scale))
+	top: 24px
+	height: 60vh
+	width: 40vw
+	&.active
+		left: 24px
+		.daumenkino-fragment:not(.daumenkino-fragment-show)
+			visibility: visible !important // HACK
+			opacity: .5
 	&.next
-		right: calc(16px - 480px + 480px * var(--scale))
-	.daumenkino-fragment
-		visibility: visible !important // HACK
+		left: unset
+		right: 24px
+		.daumenkino-fragment
+			visibility: visible !important // HACK
 
 .daumenkino.overview
 	.daumenkino-slide
