@@ -19,9 +19,17 @@ daumenkino
 		slide
 			h1 Nested Slides
 	slide
-		h1 Speaker Mode
-		:markdown
-			press `s` to open speaker window
+		slide
+			h1 Speaker Mode
+			:markdown
+				press `s` to open speaker window
+		slide
+			h1 Speaker Nodes
+			:markdown use a `notes` element to write yourself notes for the speaker mode
+			notes: :markdown
+				- hi
+				- We are notes!
+				- horray!
 </template>
 <script>
 export default {

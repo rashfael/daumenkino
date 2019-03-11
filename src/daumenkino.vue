@@ -5,6 +5,7 @@
 		.progress-bar
 	template(v-if="speakerMode")
 		.clock {{ elapsedTime }}
+		portal-target.daumenkino-notes-portal-target(name="notes")
 </template>
 <script>
 import isEqual from 'lodash/isEqual'
@@ -287,6 +288,10 @@ export default {
 		width: 20vw
 		font-size: 4vw
 		text-align: center
+	.daumenkino-notes-portal-target
+		position: absolute
+		left: 36px
+		top: 60vh
 	&.overview
 		flex-direction: row
 		padding: 50vh 50vw
