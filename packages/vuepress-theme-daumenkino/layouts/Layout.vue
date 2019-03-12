@@ -96,13 +96,11 @@ export default {
 	methods: {
 		next () {
 			if (this.nextPath) {
-				this.$store.commit('setTransitionDirection', 'next')
 				this.$store.commit('setActivePath', this.nextPath)
 			}
 		},
 		previous () {
 			if (this.previousPath) {
-				this.$store.commit('setTransitionDirection', 'previous')
 				this.$store.commit('setActivePath', this.previousPath)
 			}
 		},

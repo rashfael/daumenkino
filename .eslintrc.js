@@ -20,6 +20,7 @@ module.exports = {
 			'comma-dangle': 0,
 			curly: 0,
 			'no-return-assign': 0,
+			'no-cond-assign': 0,
 			'no-console': 'off',
 			'vue/require-default-prop': 0,
 			'object-curly-spacing': 0,

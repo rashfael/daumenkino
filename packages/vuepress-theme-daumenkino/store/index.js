@@ -13,10 +13,20 @@ const store = {
 		setSlides (state, slides) {
 			state.slides = slides
 		},
-		setTransitionDirection (state, direction) {
-			state.transitionDirection = direction
-		},
 		setActivePath (state, path) {
+			let transitionDirection
+			const oldPath = state.activePath.slice()
+			const newPath = path.slice()
+			// compensate for 0 ommission
+			oldPath.push(0)
+			newPath.push(0)
+			while (!transitionDirection && newPath.length > 0) {
+				let diff
+				if (diff = oldPath.shift() - newPath.shift()) {
+					transitionDirection = diff > 0 ? 'previous' : 'next'
+				}
+			}
+			state.transitionDirection = transitionDirection
 			state.activePath = path
 		},
 		setSpeakerMode (state, mode) {
@@ -107,7 +117,7 @@ const store = {
 				return null
 			}
 			return previousPath
-		},
+		}
 	}
 }
 

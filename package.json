@@ -1,8 +1,5 @@
 {
-  "name": "daumenkino",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "private": "true",
   "scripts": {
     "lint": "vue-cli-service lint",
     "build": "vuepress build docs",
@@ -33,7 +30,6 @@
     "stylus-loader": "^3.0.2",
     "vuepress": "^1.0.0-alpha.44"
   },
-  "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.11",
     "portal-vue": "^1.5.1",

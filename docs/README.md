@@ -9,7 +9,7 @@
 <slide>
 
 # daumenkino
-## Yet Another Presentation Framework
+## a vuepress based presentation framework
 
 </slide>
 <slide>
