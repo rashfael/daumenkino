@@ -7,14 +7,9 @@
     "lint": "vue-cli-service lint",
     "build": "vuepress build docs",
     "deploy": "npm run build -s && gh-pages -d dist",
-    "start": "vuepress dev docs"
+    "start": "npm link vuepress-theme-daumenkino && vuepress dev docs"
   },
   "author": "rashfael <rashfael@isobeef.org>",
-  "dependencies": {
-    "lodash": "^4.17.11",
-    "portal-vue": "^1.5.1",
-    "vue": "^2.6.8"
-  },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.2.0",
     "@vue/cli-plugin-babel": "^3.5.0",
@@ -29,13 +24,19 @@
     "eslint-plugin-vue": "^4.7.1",
     "gh-pages": "^1.2.0",
     "jstransformer-markdown": "^1.2.1",
+    "lerna": "^3.13.1",
     "nib": "^1.1.2",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
     "rupture": "^0.7.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
-    "vuepress": "^1.0.0-alpha.42"
+    "vuepress": "^1.0.0-alpha.44"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "portal-vue": "^1.5.1",
+    "vuex": "^3.1.0"
+  }
 }

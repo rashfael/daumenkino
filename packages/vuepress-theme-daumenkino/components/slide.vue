@@ -1,14 +1,16 @@
 <template lang="pug">
-transition(:name="`slide-${direction}`", @after-leave="afterLeave")
+transition(:name="`slide-${transitionDirection}`", @after-leave="afterLeave")
 	.daumenkino-slide(v-show="active || activeChild || nextChild || next || overview", :class="{active, next, nested}", :style="style")
 		.daumenkino-slide-content
 			slot
 </template>
 <script>
+import { mapState, mapGetters } from 'vuex'
+
 const SLIDE_WIDTH = 960
 const SLIDE_HEIGHT = 700
 export default {
-	components: {},
+	name: 'slide',
 	data () {
 		return {
 			activeChild: false,
@@ -19,41 +21,37 @@ export default {
 		}
 	},
 	computed: {
+		...mapState(['slides', 'activePath', 'overview', 'speakerMode', 'transitionDirection']),
+		...mapGetters(['activeSlide', 'nextSlide']),
 		active () {
-			return this.$parent.activeSlide === this || this.$parent.$parent.activeSlide === this
+			return this.activeSlide === this
 		},
 		next () {
-			return this.$parent.nextSlide === this || this.$parent.$parent.nextSlide === this
+			return this.nextSlide === this
 		},
 		nested () {
 			return this.nestedSlides.length > 0
 		},
-		overview () {
-			return this.$parent.overview || this.$parent.$parent.overview
-		},
 		style () {
-			const speakerFactor = (this.$parent.speakerMode || this.$parent.$parent.speakerMode) ? (this.next ? 0.5 : 0.5) : 1
+			const speakerFactor = this.speakerMode ? (this.next ? 0.5 : 0.5) : 1
 			return {
-				'--scale': this.scale * speakerFactor
+				'--scale': (this.scale * speakerFactor).toFixed(1) // HACK fix blurry text
 			}
 		},
 		shownFragments () {
 			if (!this.active) return
-			const path = this.$parent.activePath.slice()
-			if (this.$parent.slides[path.shift()].nestedSlides.length > 0) {
+			const path = this.activePath.slice()
+			if (this.slides[path.shift()].nestedSlides.length > 0) {
 				path.shift()
 			}
 			return path.shift() || 0
-		},
-		direction () {
-			return this.$parent.transitionDirection || this.$parent.$parent.transitionDirection
 		}
 	},
 	watch: {
-		'$parent.activeSlide' () {
+		'activeSlide' () {
 			this.activeChild = this.$children.some(child => child._isSlide && child.active)
 		},
-		'$parent.nextSlide' () {
+		'nextSlide' () {
 			this.nextChild = this.$children.some(child => child._isSlide && child.next)
 		}
 	},
@@ -117,6 +115,8 @@ export default {
 			width: 960px
 			height: 700px
 			transform: scale(var(--scale)) translateZ(0)
+			backface-visibility: hidden
+			-webkit-font-smoothing: subpixel-antialiased
 	.daumenkino-fragment:not(.daumenkino-fragment-show)
 		visibility: hidden
 .daumenkino.speaker-mode:not(.overview) .daumenkino-slide:not(.nested)

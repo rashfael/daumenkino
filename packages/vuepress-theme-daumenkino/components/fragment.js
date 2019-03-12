@@ -1,11 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep'
 
 export default {
-	components: {},
-	data () {
-		return {
-		}
-	},
+	name: 'fragment',
 	computed: {
 		show () {
 			return this.$parent.shownFragments > this.$parent.fragments.indexOf(this)
@@ -14,11 +10,6 @@ export default {
 	created () {
 		this._isFragment = true
 	},
-	mounted () {
-		this.$nextTick(() => {
-		})
-	},
-	methods: {},
 	render (createElement) {
 		const slot = this.$slots.default[0]
 		const data = cloneDeep(slot.data) || {}

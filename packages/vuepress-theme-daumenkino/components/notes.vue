@@ -5,23 +5,11 @@ portal(to="notes")
 </template>
 <script>
 export default {
-	components: {},
-	data () {
-		return {
-		}
-	},
+	name: 'notes',
 	computed: {
 		show () {
 			return this.$parent.active
 		}
-	},
-	created () {},
-	mounted () {
-		this.$nextTick(() => {
-		})
-	},
-	methods: {}
+	}
 }
 </script>
-<style lang="stylus">
-</style>

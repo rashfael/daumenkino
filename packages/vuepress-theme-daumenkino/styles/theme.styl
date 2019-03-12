@@ -1,0 +1,65 @@
+html, body
+	margin: 0
+.github-corner:hover .octo-arm
+	animation:octocat-wave 560ms ease-in-out
+
+@keyframes octocat-wave
+	0%,100%
+		transform:rotate(0)
+	20%,60%
+		transform:rotate(-25deg)
+	40%,80%
+		transform:rotate(10deg)
+@media (max-width:500px)
+	.github-corner:hover .octo-arm
+		animation:none
+	.github-corner .octo-arm
+		animation:octocat-wave 560ms ease-in-out
+
+
+.daumenkino
+	position: relative
+	height: 100vh
+	width: 100vw
+	display: flex
+	overflow: hidden
+	box-sizing: border-box
+
+	.progress-bar-rail
+		position: fixed
+		bottom: 0
+		left: 0
+		width: 100vw
+		height: 4px
+		background-color: #CCC
+		.progress-bar
+			height: 4px
+			width: calc((var(--slides-active) + 1) / var(--slides-total) * 100%)
+			background-color: red
+			transition: width .3s ease
+	.clock
+		position: absolute
+		top: 24px
+		left: calc(50% - 10vw)
+		width: 20vw
+		font-size: 4vw
+		text-align: center
+	.daumenkino-notes-portal-target
+		position: absolute
+		left: 36px
+		top: 60vh
+	&.overview
+		flex-direction: row
+		padding: 50vh 50vw
+
+.daumenkino
+	h1, h2, h3, h4, h5, h6, p
+		text-align: center
+	.header-anchor
+		display: none
+
+.daumenkino.daumenkino-theme-white
+	background-color: #EEE
+	color: #333
+	font-family: 'Quicksand'
+	font-size: 40px
