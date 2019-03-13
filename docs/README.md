@@ -2,22 +2,14 @@
 
 ---
 
-<!-- %%% slide
-# Hello
-%%% -->
-
-<slide>
-
 # daumenkino
 ## a vuepress based presentation framework
 
-</slide>
-<slide>
+---
 
 # Hello World
 
-</slide>
-<slide>
+---
 
 # Fragments
 
@@ -27,38 +19,29 @@
 	<fragment><li>And another one</li></fragment>
 </ul>
 
-</slide>
-<slide>
-<slide>
+---
 
 # Slide Overview
 press `ESC` to view all slides at once!
 
-</slide>
-<slide>
+===
 
 # Nested Slides
 
-</slide>
-</slide>
-<slide>
+---
 
 # Speaker Mode
 press `s` to open speaker window
 
-</slide>
-<slide>
+---
 
 # Speaker Nodes
 use a `notes` element to write yourself notes for the speaker mode
 
-<notes>
+::: notes
 
 - hi
 - We are notes!
 - horray!
 
-</notes>
-</slide>
-
-<GithubCorner/>
+:::

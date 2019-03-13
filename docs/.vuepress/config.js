@@ -6,23 +6,7 @@ module.exports = {
 	base: '/daumenkino/',
 	dest: 'dist',
 	theme: 'daumenkino',
-	markdown: {
-		extendMarkdown (md) {
-			md.use(require('markdown-it-container'), 'slide', {
-				validate (params) {
-					return params.trim().match(/^slide$/)
-				},
-				render (tokens, idx) {
-					// const m = tokens[idx].info.trim().match(/^slide\s*(.*)$/)
-					if (tokens[idx].nesting === 1) {
-						// opening tag
-						return '<slide>' + '\n'
-					} else {
-						// closing tag
-						return '</slide>\n'
-					}
-				}
-			})
-		}
-	}
+	head: [
+		['link', {href: 'https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700|Quicksand:300,400,500,700|Source+Sans+Pro:300,300i,400,400i,600,700,900', rel: 'stylesheet'}]
+	],
 }
