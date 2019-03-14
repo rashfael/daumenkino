@@ -24,6 +24,6 @@ export default {
 		if (this.show) {
 			data.class.push('daumenkino-fragment-show')
 		}
-		return createElement(slot.tag, data, slot.children || slot.text)
+		return createElement(slot.tag || 'span', data, slot.children || slot.text)
 	}
 }

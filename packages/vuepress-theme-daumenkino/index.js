@@ -11,6 +11,7 @@ module.exports = (options, ctx) => {
 		},
 		extendMarkdown (md) {
 			md.use(require('./markdown/slide.js'))
+			md.use(require('./markdown/inline-fragment.js'))
 			md.use(require('markdown-it-container'), 'notes', {
 				validate (params) {
 					return params.trim().match(/^notes/)

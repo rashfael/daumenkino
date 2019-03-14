@@ -13,11 +13,11 @@
 
 # Fragments
 
-<ul>
-	<fragment><li>This is a fragment</li></fragment>
-	<fragment><li>This is another fragment</li></fragment>
-	<fragment><li>And another one</li></fragment>
-</ul>
+- %(This is a fragment)
+- %(This is **another** fragment)
+- %(And another one)
+
+You also can have %(fragments) inside text
 
 ---
 
