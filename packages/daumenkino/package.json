@@ -1,14 +1,14 @@
 {
   "name": "daumenkino",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "",
   "author": "rashfael <rashfael@isobeef.org>",
   "license": "MIT",
   "repository": "rashfael/daumenkino",
   "bin": "cli.js",
   "dependencies": {
-    "vuepress": "^1.0.0-alpha.44",
     "cac": "^6.4.2",
+    "vuepress": "^1.0.0-alpha.44",
     "vuepress-theme-daumenkino": "=0.0.1"
   }
 }
