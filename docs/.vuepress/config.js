@@ -1,7 +1,6 @@
 module.exports = {
 	title: 'daumenkino',
 	description: 'yet another presentation framework',
-	base: '/daumenkino/',
 	dest: 'dist',
 	theme: 'daumenkino',
 	head: [

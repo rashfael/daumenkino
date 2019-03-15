@@ -1,6 +1,9 @@
 # daumenkino
 a vuepress based presentation framework
 
+## Demo
+https://daumenkino.rash.codes
+
 ## Usage
 
 ### local install in a new folder
