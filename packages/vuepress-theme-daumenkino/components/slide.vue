@@ -114,6 +114,7 @@ export default {
 			align-items: center
 			width: 960px
 			height: 700px
+			flex: none
 			transform: scale(var(--scale)) translateZ(0)
 			backface-visibility: hidden
 			-webkit-font-smoothing: subpixel-antialiased
