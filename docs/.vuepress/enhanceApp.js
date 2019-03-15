@@ -6,5 +6,7 @@ export default ({
 	router, // the router instance for the app
 	siteData // site metadata
 }) => {
-	document.body.insertAdjacentHTML('beforeend', CORNER)
+	if (typeof document !== 'undefined') {
+		document.body.insertAdjacentHTML('beforeend', CORNER)
+	}
 }
