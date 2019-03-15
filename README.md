@@ -3,14 +3,14 @@ a vuepress based presentation framework
 
 ## Usage
 
-### local install
+### local install in a new folder
 ```
 npm init
-npm install daumenkino
-npx daumenkino init
-npm start
+npm install vuepress@next vuepress-theme-daumenkino
+mkdir .vuepress && echo "module.exports = {theme: 'daumenkino'}" > .vuepress/config.js
+npx vuepress dev
 ...
-npm run build
+npx vuepress build
 ```
 
 `daumenkino` just proxies to vuepress, you can also use vuepress yourself with `vuepress-theme-daumenkino`

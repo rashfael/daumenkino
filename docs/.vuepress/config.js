@@ -1,5 +1,3 @@
-const webpack = require('webpack')
-
 module.exports = {
 	title: 'daumenkino',
 	description: 'yet another presentation framework',
