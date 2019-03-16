@@ -13,6 +13,7 @@ module.exports = (options, ctx) => {
 			md.use(require('./markdown/slide.js'))
 			md.use(require('./markdown/inline-fragment.js'))
 			md.use(require('markdown-it-implicit-figures'))
+			console.log('MARKDOWN')
 			md.use(require('markdown-it-container'), 'notes', {
 				validate (params) {
 					return params.trim().match(/^notes/)
