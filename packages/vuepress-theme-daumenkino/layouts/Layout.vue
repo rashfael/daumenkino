@@ -142,10 +142,12 @@ export default {
 					break
 				}
 				case 'Home': {
+					event.preventDefault()
 					this.$store.commit('setActivePath', [])
 					break
 				}
 				case 'End': {
+					event.preventDefault()
 					this.$store.commit('setActivePath', [this.slides.length - 1])
 					break
 				}
