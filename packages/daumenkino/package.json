@@ -1,6 +1,6 @@
 {
   "name": "daumenkino",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "",
   "author": "rashfael <rashfael@isobeef.org>",
   "license": "MIT",
@@ -9,6 +9,6 @@
   "dependencies": {
     "cac": "^6.4.2",
     "vuepress": "^1.0.0-alpha.44",
-    "vuepress-theme-daumenkino": "^0.1.4"
+    "vuepress-theme-daumenkino": "^0.1.5"
   }
 }
