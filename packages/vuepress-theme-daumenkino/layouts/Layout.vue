@@ -141,6 +141,14 @@ export default {
 					this.$store.commit('setOverview', false)
 					break
 				}
+				case 'Home': {
+					this.$store.commit('setActivePath', [])
+					break
+				}
+				case 'End': {
+					this.$store.commit('setActivePath', [this.slides.length - 1])
+					break
+				}
 			}
 		},
 		// Speaker Mode Methods
