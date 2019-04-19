@@ -84,19 +84,21 @@ const store = {
 			const previousPath = []
 			// previous fragment
 			if (!overview && activeSlide.fragments.length > 0 && activeSlide.shownFragments > 0) {
+				console.log(activeSlide)
+
 				previousPath.push(activePath[0])
 				// normalize path and omit trailing 0s
-				if (activeSlide.shownFragments !== 1 && activePath[1] !== 0 && slides[activePath[0]].nestedSlides.length > 0) {
+				if ((activeSlide.shownFragments !== 1 || activePath[1] !== 0) && slides[activePath[0]].nestedSlides.length > 0) {
 					previousPath.push(activePath[1] || 0)
 				}
 				if (activeSlide.shownFragments !== 1) {
 					previousPath.push(activeSlide.shownFragments - 1)
 				}
-			} else if (slides[(activePath[0] || 0)].nestedSlides.length > 0 && activePath[1] > 0) {
+			} else if (slides[activePath[0] || 0].nestedSlides.length > 0 && activePath[1] > 0) {
 				// previous nested slide
 				previousPath.push(activePath[0])
 				// normalize path and omit trailing 0s
-				const fragmentsLength = overview ? 0 : slides[(activePath[0] || 0)].nestedSlides[activePath[1] - 1].fragments.length
+				const fragmentsLength = overview ? 0 : slides[activePath[0] || 0].nestedSlides[activePath[1] - 1].fragments.length
 				if (activePath[1] !== 1 || fragmentsLength) {
 					previousPath.push(activePath[1] - 1)
 				}
@@ -106,9 +108,13 @@ const store = {
 			} else if (activePath[0] > 0) {
 				// previous slide
 				// normalize path and omit trailing 0s
-				const fragmentsLength = overview ? 0 : slides[activePath[0] - 1].fragments.length
-				if (activePath[0] !== 1 || fragmentsLength) {
+				const previousSlide = slides[activePath[0] - 1].nestedSlides[slides[activePath[0] - 1].nestedSlides.length - 1] || slides[activePath[0] - 1]
+				const fragmentsLength = overview ? 0 : previousSlide.fragments.length
+				if (activePath[0] !== 1 || slides[activePath[0] - 1].nestedSlides.length > 0 || fragmentsLength) {
 					previousPath.push(activePath[0] - 1)
+				}
+				if (slides[activePath[0] - 1].nestedSlides.length > 0) {
+					previousPath.push(slides[activePath[0] - 1].nestedSlides.length - 1)
 				}
 				if (fragmentsLength) {
 					previousPath.push(fragmentsLength)
