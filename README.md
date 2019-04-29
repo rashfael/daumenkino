@@ -29,6 +29,8 @@ The `npx vuepress dev` command will provide you with a server, making the presen
 the web page when it detects changes to the markdown file.
 
 You can also create multiple markdown files and directories, for more information see the [vuepress docs](https://v1.vuepress.vuejs.org/)
+As per the [vuepress directory structure](https://v1.vuepress.vuejs.org/guide/directory-structure.html), you can put
+your own style files at `.vuepress/styles/index.styl`.
 
 
 ### Deployment
