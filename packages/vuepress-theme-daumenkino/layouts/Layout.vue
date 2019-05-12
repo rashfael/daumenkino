@@ -114,16 +114,46 @@ export default {
 		},
 		globalKeyHandler (event) {
 			switch (event.key) {
-				case ' ':
-				case 'ArrowRight': {
+				case ' ': {
 					event.preventDefault()
 					this.next()
 					break
 				}
-				case 'Backspace':
-				case 'ArrowLeft': {
+				case 'Backspace': {
 					event.preventDefault()
 					this.previous()
+					break
+				}
+				case 'ArrowRight': {
+					event.preventDefault()
+					if (this.overview && (this.activePath[0] || 0) < this.slides.length - 1) {
+						this.$store.commit('setActivePath', [(this.activePath[0] || 0) + 1])
+					} else {
+						this.next()
+					}
+					break
+				}
+				case 'ArrowLeft': {
+					event.preventDefault()
+					if (this.overview && this.activePath[0] > 0) {
+						this.$store.commit('setActivePath', [this.activePath[0] - 1])
+					} else {
+						this.previous()
+					}
+					break
+				}
+				case 'ArrowUp': {
+					event.preventDefault()
+					if (this.overview && this.slides[this.activePath[0]]?.nestedSlides.length > 0 && this.activePath[1] > 0) {
+						this.previous()
+					}
+					break
+				}
+				case 'ArrowDown': {
+					event.preventDefault()
+					if (this.overview && this.slides[this.activePath[0]]?.nestedSlides.length > 0 && (this.activePath[1] || 0) < this.slides[this.activePath[0]]?.nestedSlides.length - 1) {
+						this.next()
+					}
 					break
 				}
 				case 's': {
