@@ -84,8 +84,6 @@ const store = {
 			const previousPath = []
 			// previous fragment
 			if (!overview && activeSlide.fragments.length > 0 && activeSlide.shownFragments > 0) {
-				console.log(activeSlide)
-
 				previousPath.push(activePath[0])
 				// normalize path and omit trailing 0s
 				if ((activeSlide.shownFragments !== 1 || activePath[1] !== 0) && slides[activePath[0]].nestedSlides.length > 0) {

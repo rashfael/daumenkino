@@ -167,6 +167,7 @@ export default {
 				}
 				case 'updateState': {
 					if (isEqual(this.activePath, event.data[1].activePath)) return
+					this._receivedChange = true
 					this.$store.commit('setActivePath', event.data[1].activePath)
 					break
 				}
@@ -176,6 +177,11 @@ export default {
 			if (window === undefined) return
 			const otherWindow = this._speakerWindow || (this.speakerMode && window.opener)
 			if (!otherWindow) return
+			// don't send change back
+			if (this._receivedChange) {
+				this._receivedChange = false
+				return
+			}
 			otherWindow.postMessage(['updateState', {
 				activePath: this.activePath
 			}])
