@@ -1,5 +1,5 @@
 <template lang="pug">
-.daumenkino(:class="[`daumenkino-theme-${theme}`, {'speaker-mode': speakerMode, overview}]", :style="style")
+.daumenkino(:class="classes", :style="style")
 	Content
 	.progress-bar-rail
 		.progress-bar
@@ -41,6 +41,23 @@ export default {
 				return acc + (slide.nestedSlides.length > 0 ? slide.nestedSlides.reduce(count, 0) : 1)
 			}
 			return this.slides.reduce(count, 0)
+		},
+		classes () {
+			const classes = [
+				`daumenkino-theme-${this.theme}`,
+				`slide-${(this.activePath[0] || 0) + (this.slides[this.activePath[0]]?.nestedSlides[this.activePath[1]] ? `-${this.activePath[1]}` : '')}`,
+				`slide--${this.progress}`,
+				{
+					'speaker-mode': this.speakerMode,
+					overview: this.overview,
+					'slide-first': !this.previousPath,
+					'slide-last': !this.nextPath
+				}
+			]
+			if (this.activeSlide.fragments.length > 0) {
+				classes.push(`fragment-${this.activeSlide.shownFragments}`)
+			}
+			return classes
 		},
 		style () {
 			return {
