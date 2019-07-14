@@ -154,7 +154,7 @@ export default {
 				transform: scale(calc(var(--scale) * 0.3)) translateZ(0)
 		&.active
 			border: 2px solid #333
-	.content > .daumenkino-slide
+	.content__default > .daumenkino-slide
 		transform: translate(calc(var(--active-slide-x) * var(--scale) * 0.3 * -992px + var(--scale) * 0.3 * 0.5 * -992px), calc(var(--active-slide-y) * var(--scale) * 0.3 * -732px + var(--scale) * 0.3 * 0.5 * -732px))
 	.daumenkino-fragment
 		visibility: visible !important // HACK

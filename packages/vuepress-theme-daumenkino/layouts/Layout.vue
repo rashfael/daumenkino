@@ -14,7 +14,6 @@ import isEqual from 'lodash/isEqual'
 export default {
 	data () {
 		return {
-			theme: 'white',
 			startTime: Date.now(),
 			currentTime: Date.now()
 		}
@@ -22,6 +21,9 @@ export default {
 	computed: {
 		...mapState(['slides', 'activePath', 'overview', 'speakerMode']),
 		...mapGetters(['activeSlide', 'nextPath', 'previousPath']),
+		theme () {
+			return this.$site.themeConfig?.theme || 'white'
+		},
 		totalSlides () {
 			return this.slides.reduce((acc, slide) => {
 				acc += slide.nestedSlides.length || 1

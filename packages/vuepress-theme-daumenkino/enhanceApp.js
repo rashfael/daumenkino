@@ -1,10 +1,10 @@
 import Vuex from 'vuex'
 import PortalVue from 'portal-vue'
-import Slide from '@theme/components/slide'
-import Fragment from '@theme/components/fragment'
-import Notes from '@theme/components/notes'
+import Slide from './components/slide'
+import Fragment from './components/fragment'
+import Notes from './components/notes'
 
-import store from '@theme/store'
+import store from './store'
 
 export default ({
 	Vue, // the version of Vue being used in the VuePress app
