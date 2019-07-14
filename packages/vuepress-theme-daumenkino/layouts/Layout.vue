@@ -61,6 +61,7 @@ export default {
 		activePath () {
 			this.sendState()
 			this.saveURL()
+			this.$emit('pathChanged', this.activePath)
 		}
 	},
 	mounted () {
