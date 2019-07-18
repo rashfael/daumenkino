@@ -60,6 +60,7 @@ const store = {
 			return getters.computeNextPath()
 		},
 		computeNextPath: ({overview, slides, activePath}, {activeSlide}) => (skipFragments) => {
+			if (!activeSlide) return
 			const nextPath = []
 			// next fragment
 			if (!overview && !skipFragments && activeSlide.fragments.length > 0 && activeSlide.shownFragments < activeSlide.fragments.length) {
@@ -81,6 +82,7 @@ const store = {
 			return nextPath
 		},
 		previousPath ({overview, slides, activePath}, {activeSlide}) {
+			if (!activeSlide) return
 			const previousPath = []
 			// previous fragment
 			if (!overview && activeSlide.fragments.length > 0 && activeSlide.shownFragments > 0) {

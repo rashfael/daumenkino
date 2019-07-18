@@ -54,7 +54,7 @@ export default {
 					'slide-last': !this.nextPath
 				}
 			]
-			if (this.activeSlide.fragments.length > 0) {
+			if (this.activeSlide?.fragments.length > 0) {
 				classes.push(`fragment-${this.activeSlide.shownFragments}`)
 			}
 			return classes
