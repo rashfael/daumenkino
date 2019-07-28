@@ -1,6 +1,6 @@
 <template lang="pug">
-portal(to="notes")
-	.daumenkino-notes(v-if="show")
+portal(to="notes", v-if="show")
+	.daumenkino-notes
 		slot
 </template>
 <script>
