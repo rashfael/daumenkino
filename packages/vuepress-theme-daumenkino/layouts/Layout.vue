@@ -181,6 +181,11 @@ export default {
 					this.toggleSpeakerMode()
 					break
 				}
+				case 't': {
+					event.preventDefault()
+					this.startTime = Date.now()
+					break
+				}
 				case 'Escape': {
 					event.preventDefault()
 					this.toggleOverview()
