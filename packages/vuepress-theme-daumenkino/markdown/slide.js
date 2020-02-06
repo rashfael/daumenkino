@@ -19,7 +19,7 @@ module.exports = function (md, options) {
 	}
 
 	md.renderer.rules.slide_open = function (tokens, idx, options, env) {
-		return '<slide>'
+		return '<slide v-slot="{active}">'
 	}
 	md.renderer.rules.slide_close = function (tokens, idx, options, env) {
 		return '</slide>'

@@ -2,7 +2,7 @@
 transition(:name="`slide-${transitionDirection}`", @after-leave="afterLeave")
 	.daumenkino-slide(v-show="active || activeChild || nextChild || next || overview", :class="{active, next, nested}", :style="style")
 		.daumenkino-slide-content
-			slot
+			slot(:active="active")
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex'

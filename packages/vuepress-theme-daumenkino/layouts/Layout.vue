@@ -144,6 +144,7 @@ export default {
 					this.previous()
 					break
 				}
+				case 'PageDown':
 				case 'ArrowRight': {
 					event.preventDefault()
 					if (this.overview && (this.activePath[0] || 0) < this.slides.length - 1) {
@@ -153,6 +154,7 @@ export default {
 					}
 					break
 				}
+				case 'PageUp':
 				case 'ArrowLeft': {
 					event.preventDefault()
 					if (this.overview && this.activePath[0] > 0) {
