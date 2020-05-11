@@ -96,7 +96,7 @@ export default {
 					})
 				} else {
 					this.$nextTick(() => {
-						findSlides(parent.$children[0])
+						findSlides(parent.$children.find(child => child.$el.getRootNode() === document))
 					})
 				}
 			})
